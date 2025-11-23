@@ -1,4 +1,4 @@
-import { IsString, IsEmail, MinLength } from 'class-validator';
+import { IsString, IsEmail, MinLength, IsOptional } from 'class-validator';
 
 /**
  * Data Transfer Object for creating a new User.
@@ -14,5 +14,9 @@ export class CreateUserDto {
   readonly password: string;
 
   @IsString()
-  readonly name: string;
-} 
+  readonly firstName: string; // Required, matches your schema
+
+  @IsOptional()
+  @IsString()
+  readonly lastName?: string; // Optional, matches your schema
+}  

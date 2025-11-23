@@ -5,6 +5,7 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
 export class User {
+  [x: string]: any;
   @Prop({ required: true, unique: true, index: true })
   email: string;
 
@@ -17,6 +18,9 @@ export class User {
 
   @Prop()
   lastName: string;
+
+  @Prop()
+  id: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
