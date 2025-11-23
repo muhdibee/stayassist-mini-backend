@@ -1,7 +1,8 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { jwtConstants } from './constants';
+import { ConfigService } from '@nestjs/config'; // <-- Import ConfigService
+// import { jwtConstants } from './constants'; // <-- No longer needed
 
 /**
  * Passport JWT Strategy for validating the token provided in the request headers.
@@ -9,14 +10,23 @@ import { jwtConstants } from './constants';
  */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(
+    // Inject ConfigService to access environment variables
+    private configService: ConfigService, 
+  ) {
+    // Read secret from environment and fail early if missing to satisfy required typing
+    const secret = configService.get<string>('JWT_SECRET');
+    if (!secret) {
+      throw new Error('JWT_SECRET environment variable is not set');
+    }
+
     super({
       // Extract the JWT from the Authorization header as a Bearer token
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       // Ensure the token has not expired
       ignoreExpiration: false,
-      // Use the secret key to verify the token's signature
-      secretOrKey: jwtConstants.secret,
+      // Use the secret key fetched from the environment variables
+      secretOrKey: secret,
     });
   }
 

@@ -43,6 +43,8 @@ export class UsersService {
    * @returns The user document or null if not found.
    */
   async findByEmail(email: string): Promise<UserDocument | null> {
-    return this.userModel.findOne({ email }).exec();
+    // `password` is defined with `select: false` in the schema, so include it explicitly
+    // when we need to validate credentials.
+    return this.userModel.findOne({ email }).select('+password').exec();
   }
 }

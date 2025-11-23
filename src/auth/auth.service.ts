@@ -22,10 +22,12 @@ export class AuthService {
    */
   async validateUser(email: string, pass: string): Promise<User | null> {
     const user = await this.usersService.findByEmail(email);
+    // console.log("User found in validateUser:", user);
 
     if (user && user.password) {
       // Compare the plaintext password with the hashed password in the database
       const isMatch = await bcrypt.compare(pass, user.password);
+      // console.log("Password match result:", isMatch);
 
       if (isMatch) {
         // Return the user without the password hash
@@ -42,7 +44,7 @@ export class AuthService {
    */
   async login(user: User) {
     // Define the data to be stored in the JWT payload
-    const payload = { email: user.email, sub: user.id };
+    const payload = { email: user.email, sub: user._id.toString() };
     
     // Sign the payload to create the JWT
     return {

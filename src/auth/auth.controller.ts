@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { User } from 'src/users/schemas/user.schema';
 
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -20,6 +20,7 @@ export class AuthController {
   async login(@Request() req: { user: User }) {
     // The user object (without password) is available on req.user thanks to LocalStrategy
     // We pass the user object to AuthService to generate the JWT
+    // console.log("User in login controller:", req.user);
     return this.authService.login(req.user);
   }
   
