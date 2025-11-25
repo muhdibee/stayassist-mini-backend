@@ -8,7 +8,13 @@ export type ListingDocument = HydratedDocument<Listing>;
  * Listing Schema representing a short-stay rental property.
  * Fulfills assessment requirements: title, description, price, city, photos, and host.
  */
-@Schema({ timestamps: true })
+@Schema({ 
+  timestamps: true,
+  // CRITICAL FIX: Add this configuration to ensure virtuals (like hostName) are included
+  // when the Mongoose document is converted to JSON or a plain object for the API response.
+  toJSON: { virtuals: true }, 
+  toObject: { virtuals: true }
+})
 export class Listing {
   @Prop({ required: true })
   title: string;
@@ -21,9 +27,9 @@ export class Listing {
 
   @Prop({ required: true })
   @Prop({ type: Number, min: 0 })
-  pricePerNight: number; // Price per night, in a currency unit (e.g., NGN)
+  pricePerNight: number; // Price per night, in a currency unit (e.g., USD)
 
-  // Array of photo URLs
+  // Array of photo URLs, as required by the assessment
   @Prop({ type: [String], default: [] })
   photoUrls: string[];
 
@@ -41,7 +47,7 @@ export const ListingSchema = SchemaFactory.createForClass(Listing);
 ListingSchema.virtual('hostName').get(function() {
   // If the host field is populated, we can access the firstName
   if (this.host && typeof this.host !== 'string' && this.host.firstName) {
-    return this.host.firstName;
+    return `${this.host.firstName} ${this.host.lastName}`; // Adjusted for full name
   }
   return 'Unknown Host';
 });
