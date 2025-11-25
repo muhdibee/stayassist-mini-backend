@@ -47,4 +47,11 @@ export class UsersService {
     // when we need to validate credentials.
     return this.userModel.findOne({ email }).select('+password').exec();
   }
+  /**
+   * Finds any single user in the database. Used for seeding logic.
+   * @returns Any user document or null.
+   */
+  async findAnyUser(): Promise<UserDocument | null> {
+    return this.userModel.findOne().exec();
+  }
 }
