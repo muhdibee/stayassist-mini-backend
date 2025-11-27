@@ -10,7 +10,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ListingsModule } from './listings/listings.module';
-import { BookingsModule } from './bookings/bookings.module';
+import { BookingsModule } from './bookings/bookings.module'; 
 
 @Module({
   imports: [
