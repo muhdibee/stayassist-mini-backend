@@ -2,7 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ConfigService } from '@nestjs/config'; // <-- Import ConfigService
+import { ConfigService } from '@nestjs/config';
+import cookieParser from 'cookie-parser'; // <-- Import cookieParser
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,19 +14,22 @@ async function bootstrap() {
   const frontendOrigin = configService.get<string>('FRONTEND_ORIGIN');
 
   // ----------------------------------------------------
+  // Middleware for parsing cookies (required for jwt cookie extraction)
+  app.use(cookieParser()); // <-- Add cookie-parser middleware
+  // ----------------------------------------------------
+
   // FIX: Explicit CORS configuration using environment variable
   app.enableCors({
-    origin: frontendOrigin, // <-- Dynamically set the origin
+    origin: frontendOrigin,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
     credentials: true, 
   });
-  // ----------------------------------------------------
   
   // Apply global validation pipe using class-validator
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // Automatically strip properties that do not have any decorators
-      transform: true, // Automatically transform payloads to be objects of the DTO classes
+      whitelist: true, 
+      transform: true, 
     }),
   );
 

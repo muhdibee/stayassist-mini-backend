@@ -1,38 +1,80 @@
-import { Controller, Post, Body, UseGuards, Request, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, Get, Res, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { User } from 'src/users/schemas/user.schema';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import type { Response } from 'express'; // Import Response type from express
 
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   /**
-   * Endpoint for user login.
-   * Uses the 'Local' Guard (LocalStrategy) to validate the user's email and password.
-   * If validation succeeds, Passport attaches the validated user object to req.user.
+   * Registers a new user and sets the JWT in an HTTP-only cookie.
    */
-  @UseGuards(AuthGuard('local'))
-  @Post('login')
-  @HttpCode(HttpStatus.OK)
-  // The LoginDto validation is implied and handled by NestJS ValidationPipe
-  async login(@Request() req: { user: User }) {
-    // The user object (without password) is available on req.user thanks to LocalStrategy
-    // We pass the user object to AuthService to generate the JWT
-    // console.log("User in login controller:", req.user);
-    return this.authService.login(req.user);
+  @Post('signup')
+  async register(
+    @Body() createUserDto: CreateUserDto, 
+    @Res({ passthrough: true }) response: Response // Inject response object
+  ) {
+    const { user, token } = await this.authService.register(createUserDto);
+    
+    // Set JWT as an HTTP-only cookie
+    response.cookie('jwt', token.access_token, {
+      httpOnly: true,
+      secure: false, //process.env.NODE_ENV === 'production', // Use secure in production (HTTPS)
+      sameSite: 'strict', // Protect against CSRF
+      maxAge: 3600000, // 1 hour expiration in milliseconds
+    });
+
+    return { message: 'Registration successful. Token set in HTTP-only cookie.', user: { 
+      email: user.email, 
+      firstName: user.firstName, 
+      lastName: user.lastName 
+    }};
   }
-  
+
   /**
-   * Protected route to fetch the user's profile data.
-   * Uses the 'Jwt' Guard (JwtStrategy) which verifies the JWT in the Authorization header.
-   * If the JWT is valid, the payload data (userId, email) is attached to req.user.
+   * Logs in a user and sets the JWT in an HTTP-only cookie.
+   */
+  @Post('login')
+  async login(
+    @Body() loginUserDto: LoginUserDto, 
+    @Res({ passthrough: true }) response: Response // Inject response object
+  ) {
+    const token = await this.authService.login(loginUserDto);
+
+    // Set JWT as an HTTP-only cookie
+    response.cookie('jwt', token.access_token, {
+      httpOnly: true,
+      secure: false, //process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000,
+    });
+
+    return { message: 'Login successful. Token set in HTTP-only cookie.' };
+  }
+
+  /**
+   * Clears the 'jwt' cookie to log the user out.
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('jwt', {
+      httpOnly: true,
+      secure: false, //process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+    return { message: 'Successfully logged out.' };
+  }
+
+  /**
+   * Protected route to retrieve the authenticated user's profile.
    */
   @UseGuards(AuthGuard('jwt'))
   @Get('profile')
   getProfile(@Request() req: any) {
-    // req.user contains the decoded JWT payload (userId and email) from JwtStrategy
     return req.user;
   }
 }

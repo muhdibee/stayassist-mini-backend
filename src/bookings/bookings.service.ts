@@ -123,7 +123,7 @@ export class BookingsService {
   async findBookingsByUser(userId: string): Promise<Booking[]> {
     // Populate the listing details for the traveler's history view
     return this.bookingModel.find({ user: userId })
-      .populate('listing', 'title city pricePerNight photoUrls') 
+      .populate('listing', '_id title city pricePerNight photoUrls') 
       .exec();
   }
 }

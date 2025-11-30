@@ -3,7 +3,7 @@ import { IsString, IsEmail, MinLength } from 'class-validator';
 /**
  * Data Transfer Object for handling user login requests.
  */
-export class LoginDto {
+export class LoginUserDto {
   @IsEmail()
   @IsString()
   readonly email: string;
