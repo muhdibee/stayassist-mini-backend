@@ -51,7 +51,7 @@ async function bootstrap() {
   // ----------------------------------------
 
   // Set up global route prefix for all controllers (e.g., /api/listings, /api/auth)
-  app.setGlobalPrefix('api'); 
+  // app.setGlobalPrefix('api'); 
 
   // Listening on port 4000
   await app.listen(4000);

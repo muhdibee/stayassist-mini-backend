@@ -4,7 +4,7 @@ import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { Booking } from './schemas/booking.schema';
 
-@Controller('bookings')
+@Controller('api/bookings')
 // All booking routes require a logged-in user
 @UseGuards(AuthGuard('jwt'))
 export class BookingsController {

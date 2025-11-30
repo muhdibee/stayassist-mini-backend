@@ -5,7 +5,7 @@ import { CreateListingDto } from './dto/create-listing.dto';
 import { SearchListingsDto } from './dto/search-listings.dto'; // <-- Import new DTO
 import { Listing } from './schemas/listing.schema';
 
-@Controller('listings')
+@Controller('api/listings')
 export class ListingsController {
   constructor(private readonly listingsService: ListingsService) {}
 
