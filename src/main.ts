@@ -12,6 +12,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   // Read the FRONTEND_ORIGIN from the environment variables
   const frontendOrigin = configService.get<string>('FRONTEND_ORIGIN');
+  console.log(`CORS Origin set to: ${frontendOrigin}`);
 
   // ----------------------------------------------------
   // Middleware for parsing cookies (required for jwt cookie extraction)
@@ -21,7 +22,7 @@ async function bootstrap() {
   // FIX: Explicit CORS configuration using environment variable
   app.enableCors({
     origin: frontendOrigin,
-    secure: true,
+    // secure: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
     credentials: true, 
   });
