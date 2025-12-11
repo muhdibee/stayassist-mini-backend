@@ -45,7 +45,7 @@ have been successfully implemented:
 
 Base URL:
 
-    http://localhost:3000/api
+    https://stayassist-mini-backend.up.railway.app/api
 
 ## 1. 🔐 Authentication Endpoints
 
@@ -57,7 +57,7 @@ Base URL:
 
   POST       `/auth/login`      Authenticate and  ❌ No                 `{ email, password }`
                                 return a JWT                            
-                                token                                   
+                                token via cookie                                   
 
   GET        `/auth/profile`    Get authenticated ✅ Yes (JWT)          None
                                 user profile                            
@@ -128,7 +128,7 @@ npm run start:dev
 
 The app will start on:
 
-    http://localhost:3000
+    http://localhost:4000
 
 On startup, the app will automatically seed:
 
