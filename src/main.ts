@@ -22,9 +22,6 @@ async function bootstrap() {
   // FIX: Explicit CORS configuration using environment variable
   app.enableCors({
     origin: frontendOrigin,
-    secure: true,
-    SameSite: "None",
-    HttpOnly: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
     credentials: true, 
   });

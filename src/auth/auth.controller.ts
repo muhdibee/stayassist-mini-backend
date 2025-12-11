@@ -22,8 +22,8 @@ export class AuthController {
     // Set JWT as an HTTP-only cookie
     response.cookie('jwt', token.access_token, {
       httpOnly: true,
-      secure: false, //process.env.NODE_ENV === 'production', // Use secure in production (HTTPS)
-      sameSite: 'strict', // Protect against CSRF
+      secure: true, //process.env.NODE_ENV === 'production', // Use secure in production (HTTPS)
+      sameSite: 'none', // to send cookies on different sites
       maxAge: 3600000, // 1 hour expiration in milliseconds
     });
 
@@ -47,9 +47,9 @@ export class AuthController {
     // Set JWT as an HTTP-only cookie
     response.cookie('jwt', token.access_token, {
       httpOnly: true,
-      secure: false, //process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 3600000,
+      secure: true, //process.env.NODE_ENV === 'production',
+      sameSite: 'none',
+      maxAge: 3600000, // 1 hour expiration in milliseconds
     });
 
     return { message: 'Login successful. Token set in HTTP-only cookie.' };
